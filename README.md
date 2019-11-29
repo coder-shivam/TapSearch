@@ -45,8 +45,8 @@ A we go to the link above, it lands us to index page :<br>
 <b>SNAPSHOTS OF THE APP:</b><br>
 
  
- <img src="/app-snapshots/Capture_1.png"> </img>
+ <img src="/app-snapshots/Capture_1.PNG"> </img>
  
- <img src="/app-snapshots/Capture_2.png"> </img>
+ <img src="/app-snapshots/Capture_2.PNG"> </img>
  <br>
-<img src="/app-snapshots/Capture_3.png"> </img>
+<img src="/app-snapshots/Capture_3.PNG"> </img>
