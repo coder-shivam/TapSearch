@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tap Search</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="container" style="padding:15px;margin-top:15px;box-shadow: 1px 2px 2px 2px;">
+            <div class="row mb-3">
+                <div class="col">
+                    <br>
+                    <h1><center>Welcome to TapSearch</center></h1><br>
+                </div>
+                <hr>
+            </div>
+            <form>
+                <div class="">
+                    <label>Input Paragraphs</label>
+                    
+                    <textarea style = "height:298px;"  class="form-control" id ="inputArea" placeholder = "Hi!! Enter the Document Content" onkeyup="manage(this)" disabled></textarea>
+                    
+                    <label style="margin-top:9px;">Input Word to search</label>
+                    
+                    <input type="text" class="form-control"  id="inputWord" placeholder="Enter the word to be searched"> 
+                    
+                </div>
+                <br>
+                <p id = "message"></p>
+                
+                <div class="row col-sm-12">
+                    <button id = "bt1" type ="button" onclick="onIndexing()" class = "col-sm-2" disabled>Index</button>
+                    <button id = "bt2" type = "button" onclick = "onSearchWord()" class = "offset-sm-1 col-sm-2" disabled>Search</button>
+                    <button id = "bt3" type = "button" onclick = "onClear()" class = "offset-sm-1 col-sm-2">Clear/Edit</button>
+                </div>
+                
+                
+            </form>
+        </div>
+    </div>
+    <script>
+        
+        var inputArea = document.getElementById("inputArea");
+        
+        function manage(inputArea){
+            var bt1 = document.getElementById("bt1");
+            var bt2 = document.getElementById("bt2");
+            if(inputArea.value != ''){
+                bt1.disabled = false;
+                bt2.disabled = false;
+        
+            }else{
+                bt1.disabled = true;
+                bt2.disabled = true;
+            
+            }
+        }
+        function onIndexing(){
+
+            var inputArea = document.getElementById("inputArea").value;
+            var wordToSearch = document.getElementById("inputWord").value;
+            
+            for(var i=0;i<inputArea.length;i++)
+                {
+                    if(/\r|\n/.exec(inputArea[i]))
+                    {
+                        inputArea[i]+'\n';
+                    }
+                }
+     
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", window.location.origin + "/indexParagraph", true);
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = this.responseText;
+                    var result = JSON.parse(response);
+                    document.getElementById("message").innerHTML = result.Message;
+                }
+            };
+            xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.send(JSON.stringify({"Document": inputArea,"WordToSearch": wordToSearch}));
+            document.getElementById("bt1").disabled = true;
+        }
+        function onSearchWord(){
+           
+            var inputArea = document.getElementById("inputArea").value;
+            var wordToSearch = document.getElementById("inputWord").value;
+            console.log(inputArea);
+            
+            for(var i=0;i<inputArea.length;i++)
+                {
+                    if(/\r|\n/.exec(inputArea[i]))
+                    {
+                        inputArea[i]+'\n';   
+                    }
+                }
+     
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", window.location.origin + "/searchWord", true);
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = this.responseText;
+                    var result = JSON.parse(response);
+                    
+                    if(result.Status === '200'){
+                        document.getElementById("inputArea").value = '';
+                        document.getElementById("inputWord").value='';
+                        document.getElementById("inputArea").disabled = true;
+                        document.getElementById("inputArea").value = result.Paragraphs;
+                    }
+                    document.getElementById("message").innerHTML = result.Message;
+                    
+                }
+            };
+            xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.send(JSON.stringify({"Document": inputArea,"WordToSearch": wordToSearch}));
+            
+        }
+
+        function onClear(){
+            var inputArea = document.getElementById("inputArea").value;
+            var wordToSearch = document.getElementById("inputWord").value;
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("DELETE", window.location.origin + "/clearIndexing", true);
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = this.responseText;
+                    var result = JSON.parse(response);
+                    
+                    document.getElementById("message").innerHTML = result.Message;
+                }
+            };
+            xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.send(JSON.stringify({"Document": null,"WordToSearch": null}));
+            document.getElementById("inputArea").value = '';
+            document.getElementById("inputWord").value='';
+            document.getElementById("bt1").disabled = false;
+            document.getElementById("inputArea").disabled = false;
+        }
+    </script>
+</body>
+
+</html>
